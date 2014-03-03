@@ -63,9 +63,11 @@ COMPONENT font_rom
 	END COMPONENT;	
 
 signal count, count_next: std_logic_vector(11 downto 0);
+signal address_b_sig: std_logic_vector(13 downto 0);
 signal data_out_a_sig: std_logic_vector(7 downto 0);
 signal data_out_b_sig: std_logic_vector(7 downto 0);
 signal font_data_sig: std_logic_vector(7 downto 0);
+signal row_sig, row_sig_next: std_logic_vector(3 downto 0);
 signal sel_next_1, sel_next_2, sel_inter, sel: std_logic_vector(2 downto 0);
 signal color: std_logic;
 
@@ -76,7 +78,7 @@ Inst_char_screen_buffer: char_screen_buffer PORT MAP(
 		clk => clk,
 		we => write_en,
 		address_a => count,
-		address_b => std_logic_vector(unsigned(row(10 downto 4))*80 + unsigned(column(10 downto 3))),
+		address_b => address_b_sig(11 downto 0),
 		data_in => ascii_to_write,
 		data_out_a => open,
 		data_out_b => data_out_b_sig
@@ -84,11 +86,23 @@ Inst_char_screen_buffer: char_screen_buffer PORT MAP(
 	
 Inst_font_rom: font_rom PORT MAP(
 		clk => clk,
-		addr => data_out_b_sig(6 downto 0) & row(3 downto 0),
+		addr => data_out_b_sig(6 downto 0) & row_sig,
 		data => font_data_sig
 	);	
 
---count ogic
+-- col row sig
+	address_b_sig <= std_logic_vector(unsigned(row(10 downto 4))*80 + unsigned(column(10 downto 3)));
+
+row_sig_next <= row(3 downto 0);
+
+process(clk)
+	begin
+		if(rising_edge(clk)) then
+			row_sig <= row_sig_next;
+		end if;
+end process;
+
+--count logic
 count_next <= (others => '0') when reset = '1' else count;
 count <= std_logic_vector(unsigned(count_next) + 1) when rising_edge(write_en) else 
 			count_next;

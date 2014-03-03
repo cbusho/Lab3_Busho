@@ -107,7 +107,7 @@ begin
 		blank => top_blank,
 		reset => reset,
 		row => std_logic_vector(top_row),
-		column => std_logic_vector(top_col),
+		column => std_logic_vector(top_column),
 		ascii_to_write => switch,
 		write_en => button_pulse,
 		r => red,
