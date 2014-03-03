@@ -33,6 +33,7 @@ entity atlys_lab_video is
     Port ( clk : in  STD_LOGIC;
            reset : in  STD_LOGIC;
 			  Start: in STD_LOGIC;
+			  button: in STD_LOGIC;
 			  switch: in STD_LOGIC_VECTOR (7 downto 0);
 			  led: out STD_LOGIC_VECTOR (7 downto 0);	
            tmds : out  STD_LOGIC_VECTOR (3 downto 0);
@@ -53,12 +54,13 @@ COMPONENT vga_sync
 		column : OUT unsigned(10 downto 0)
 		);
 	END COMPONENT;
-
-signal top_blank: std_logic;
-signal top_row, top_column, ball_x_s, ball_y_s, paddle_y_s: unsigned(10 downto 0);
+	
+signal top_blank, blank1, blank2, button_pulse: std_logic;
+signal top_row, top_column: unsigned(10 downto 0);
 signal red, green, blue: std_logic_vector(7 downto 0);
 signal v_sync_sig, h_sync_sig, pixel_clk, serialize_clk, serialize_clk_n,
-		 red_s, green_s, blue_s, clock_s, v_comp: std_logic;
+		 red_s, green_s, blue_s, clock_s, v_comp,
+		 v_sync_sig1, h_sync_sig1, v_sync_sig2, h_sync_sig2: std_logic;
 
 begin
 
@@ -89,7 +91,6 @@ begin
                 clkfx180 => serialize_clk_n
             );
 
-    -- TODO: VGA component instantiation
 	 Inst_vga_sync: vga_sync PORT MAP(
 		clk => pixel_clk,
 		reset => reset,
@@ -101,6 +102,44 @@ begin
 		column => top_column
 	);
 	
+	Inst_character_gen: entity work.character_gen(Behavioral) PORT MAP(
+		clk => pixel_clk,
+		blank => top_blank,
+		reset => reset,
+		row => std_logic_vector(top_row),
+		column => std_logic_vector(top_col),
+		ascii_to_write => switch,
+		write_en => button_pulse,
+		r => red,
+		g => green,
+		b => blue
+	);
+	
+	Inst_input_to_pulse: entity work.input_to_pulse(Behavioral) PORT MAP(
+		clk => pixel_clk,
+		reset => reset,
+		input => button,
+		pulse => button_pulse
+	);
+	
+	process(pixel_clk)
+	begin
+		if(rising_edge(pixel_clk)) then
+			h_sync_sig1 <= h_sync_sig;
+			v_sync_sig1 <= v_sync_sig;
+			blank1 <= top_blank;
+		end if;
+	end process;
+
+	process(pixel_clk)
+	begin
+		if(rising_edge(pixel_clk)) then
+			h_sync_sig2 <= h_sync_sig1;
+			v_sync_sig2<= v_sync_sig1;
+			blank2 <= blank1;
+		end if;
+	end process;	
+	
     -- Convert VGA signals to HDMI (actually, DVID ... but close enough)
     inst_dvid: entity work.dvid
     port map(
@@ -110,9 +149,9 @@ begin
                 red_p     => red,
                 green_p   => green,
                 blue_p    => blue,
-                blank     => top_blank,
-                hsync     => h_sync_sig,
-                vsync     => v_sync_sig,
+                blank     => blank2,
+                hsync     => h_sync_sig2,
+                vsync     => v_sync_sig2,
                 -- outputs to TMDS drivers
                 red_s     => red_s,
                 green_s   => green_s,
