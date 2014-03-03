@@ -53,16 +53,6 @@ COMPONENT vga_sync
 		column : OUT unsigned(10 downto 0)
 		);
 	END COMPONENT;
-	
-COMPONENT ASCII_pixel_gen
-	PORT(
-			  row : in  unsigned (10 downto 0);
-           column : in  unsigned (10 downto 0);
-           blank : in  STD_LOGIC;
-			  ball_x, ball_y, paddle_y : in unsigned (10 downto 0);
-           r,g,b : out  STD_LOGIC_VECTOR (7 downto 0)
-		);
-	END COMPONENT;	
 
 signal top_blank: std_logic;
 signal top_row, top_column, ball_x_s, ball_y_s, paddle_y_s: unsigned(10 downto 0);
@@ -109,19 +99,6 @@ begin
 		blank => top_blank,
 		row => top_row,
 		column => top_column
-	);
-	 
-    -- TODO: Pixel generator component instantiation
-	 Inst_pixel_gen: ASCII_pixel_gen PORT MAP(
-		row => top_row,
-		column => top_column,
-		blank => top_blank,
-		ball_x => ball_x_s,
-		ball_y => ball_y_s,
-		paddle_y => paddle_y_s,
-		r => red,
-		g => green,
-		b => blue
 	);
 	
     -- Convert VGA signals to HDMI (actually, DVID ... but close enough)

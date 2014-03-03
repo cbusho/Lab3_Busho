@@ -107,10 +107,10 @@ begin
 		
 end Behavioral;
 
---architecture red of pixel_gen is
---begin
---	r <= (others => '1') when blank = '0' else
---			(others => '0');
---	g <= (others => '0');
---	b <= (others => '0');
---end red;
+architecture red of pixel_gen is
+begin
+	r <= (others => '1') when blank = '0' else
+			(others => '0');
+	g <= (others => '0');
+	b <= (others => '0');
+end red;
