@@ -104,7 +104,7 @@ begin
 	
 	Inst_character_gen: entity work.character_gen(Behavioral) PORT MAP(
 		clk => pixel_clk,
-		blank => top_blank,
+		blank => blank2,
 		reset => reset,
 		row => std_logic_vector(top_row),
 		column => std_logic_vector(top_column),

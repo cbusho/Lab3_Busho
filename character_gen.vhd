@@ -103,9 +103,18 @@ process(clk)
 end process;
 
 --count logic
-count_next <= (others => '0') when reset = '1' else count;
-count <= std_logic_vector(unsigned(count_next) + 1) when rising_edge(write_en) else 
-			count_next;
+count_next <= (others => '0') when reset = '1' else 
+					std_logic_vector(unsigned(count)+1) when rising_edge(write_en) else
+					count;
+			
+process(clk)
+	begin
+		if(reset = '1') then
+			count <= (others => '0');
+		elsif(rising_edge(clk)) then
+			count <= count_next;
+		end if;
+end process;			
 
 --mux to draw	
 sel_next_1 <= column(2 downto 0);
