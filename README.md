@@ -79,18 +79,22 @@ and its top shell are included below.
 
 ## Test/Debug
 
-- Made the AF logo, it was not straight, proceeded to draw it out on a piece of paper
-- Drew the ball and tried to make it move, realized it was moving too fast and made it move off of 
-  a count that counted up on v_completed
-- Ball kept 'teleporting every 8 seconds, it was really moving really fast for a split second
-- Made my next output buffers only trigger off of v_completed
-- Had to do the same to paddle to prevent it from moving really fast
-- Had to set my default values for the next output buffers outside of the v_completed if statement 
-  to prevent inferred memory
+- Nothing would show up at first, need to check that device, configuration, and package are all properly
+selected for the FPGA we are using. 
+- The controller was unable to change the first character initially, this was fixed by changing my 
+count_next variable to change to 0 on reset. Without this, it would start at 1 and then count would
+go to 1 before I pressed the button. 
+- The last column was not drawing properly. This is because I initially forgot the pipeline delays of
+the VGA signals in the top shell. Once I added these with DFFs, the last column would draw. 
   
 ## Conclusion
-I learned that creating combinational logic whenever possible seems to be easier. Placing everything 
-inside process statements has the potential to cause several timing issues and inferred memory. Signals 
-may not change when you want them to if you are not careful about what goes inside your process statements.
-While debugging may be a pain, this lab has shown me to be extra careful with sensitivity lists and how 
-to code memory.
+In this lab, I learned how to read a graphical depiction of a module with its signals in order to 
+figure out how the instantiated modules and internal signals are wired up to the inputs and outputs. I 
+also learned pipeline delays may be necessary in order to sync up certain signals. This lab also helped 
+me practice using other peoples' modules in addition to my own to create a controller.
+
+- Documentation: C2C John Miller gave the idea to make a button state machine with the three states idle,
+pressed, and released. He also told me 50000 clock cycles is a long enough delay. C2C Bentley explained
+how a mux is needed to select one of the 8 bits from the font data in order to color the correct column.
+He also showed me the math for calculating the address b signal for the screen buffer using column and row.
+C2C Taorimina explained to me how the pipeline delays work via DFFs.
