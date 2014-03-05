@@ -53,17 +53,29 @@ performed.
 		input <= '0';	
 ```
 
-- I used the pong control module as my state machine to keep track of the ball and paddle. The pixel
-gen module was used to color the items on the screen. Both of these modules were instantiated in the
-top atlys shell in conjunction with all the VGA components used in Lab1 in order to drive the VGA screen.
+- I used the character gen module essentially to hook up all of the components together. I instantiated
+the character screen buffer and the font rom. This portion of the lab was learning how to hook up the 
+various signals and understanding how someone else's components are supposed to work. We were given a 
+font rom that contained the data on what pixels to color in for a given character. The screen buffer
+was also given. This selected which character we were to color out of RAM when given a certain address
+to find. 
+
+- The character gen has inputs row and column to determine where on the screen a character is being
+writeen. A counter was made to determine which character was altered based on the row and column. The
+ASCII_to_write input was the address used to fetch a character from the screen buffer in RAM. The 
+write_en was there to advance the counter and indirectly the character being written. 
+
+- When all of the signals were hooked up with the screen buffer and font rom, the font rom outputted a
+signal (7 downto 0). The signal was used to color the eight different columns that make up an individual
+character. A mux was used that based on the last three bits in column would make the output color go high
+if it was on the correct column that needed to be colored.
+
+- Because the character gen was essentially hooking signals together, a block diagram of the character gen
+and its top shell are included below.
 
 - Block Diagram 
 
-![alt text](Block_diagram.png "Block Diagram")
-
-- pong_control.vhd state diagram
-
-![alt text](Pong_control_state_diagram.png "State Diagram")
+![alt text](Block_Diagram.png "Block Diagram")
 
 ## Test/Debug
 
