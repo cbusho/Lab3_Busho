@@ -53,6 +53,10 @@ performed.
 		input <= '0';	
 ```
 
+- Input to pulse state diagram
+
+![alt text](Input_to_pulse_state_diagram.png "Input to pulse state diagram")
+
 - I used the character gen module essentially to hook up all of the components together. I instantiated
 the character screen buffer and the font rom. This portion of the lab was learning how to hook up the 
 various signals and understanding how someone else's components are supposed to work. We were given a 
