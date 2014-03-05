@@ -8,10 +8,8 @@ and a button that used a Moore state machine to debounce to select which charact
 
 
 ## Implementation
-- Used D Flip Flops for next state, current state, count, output buffers, and next output buffers
-in the pong control module. For a Moore machine, the output DFF is only hooked up to the current state
-while a Mealy machine has its output DFF connected to the inputs and current state DFFs. The combinational
-logic uses multiplexers.
+- I used A Moore state machine for my button presses. This made sure to debounce the buttons so the user
+could select one character at a time. I used D Flip Flops for next state, current state, count, output buffers, and next output buffers for the input to pulse (button) module. 
 
   - This is an example of a D Flip Flop
 
@@ -27,12 +25,32 @@ logic uses multiplexers.
 	end process;
 ```
 
-  - This is an example of serveral multiplexers
+  - This is an example of a mux
 
 ``` VHDL
-count_next <= 	(others => '0') when (count_reg > 1000) and (state_reg /= state_next) else
-						count_reg + 1 when v_completed = '1' else
-						count_reg;	
+count_next <= count_reg + 1 when ((button_next = pressed) and (input = '0')) else
+						  to_unsigned(0,20);	
+```
+
+- I also created a testbench to test if the state machine worked. The testbench was too spread out to 
+see all of it in one screen because a long delay was used to prevent debouncing. The following test was
+performed.
+
+``` VHDL
+      wait for clk_period*10;
+
+		reset <= '0';
+		input <= '1';
+
+		 wait for 100 ns;	
+
+      wait for clk_period*10;
+
+		input <= '0';
+		wait for 600 us;
+		input <= '1';
+		wait for 1000 ns;
+		input <= '0';	
 ```
 
 - I used the pong control module as my state machine to keep track of the ball and paddle. The pixel
