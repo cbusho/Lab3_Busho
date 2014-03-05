@@ -32,7 +32,7 @@ use UNISIM.VComponents.all;
 entity character_gen is
     Port ( clk : in  STD_LOGIC;
            blank : in  STD_LOGIC;
-			  reset : in STD_LOGIC;
+	   reset : in STD_LOGIC;
            row : in  STD_LOGIC_VECTOR (10 downto 0);
            column : in  STD_LOGIC_VECTOR (10 downto 0);
            ascii_to_write : in  STD_LOGIC_VECTOR (7 downto 0);
